@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שביבי בריאות - פורטל תזונה ואורח חיים בריא</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Heebo -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'sans-serif'],
+                    },
+                    colors: {
+                        health: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            transition: font-size 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Accessibility high contrast & font sizing classes */
+        body.high-contrast {
+            background-color: #000 !important;
+            color: #ffff00 !important;
+        }
+        body.high-contrast header, body.high-contrast footer, body.high-contrast .card {
+            background-color: #111 !important;
+            border-color: #ffff00 !important;
+            color: #ffff00 !important;
+        }
+        .text-lg-accessibility { font-size: 1.25rem !important; }
+        .text-xl-accessibility { font-size: 1.5rem !important; }
+    </style>
+</head>
+<body class="bg-health-50 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- Accessibility Toolbar -->
+    <div aria-label="סרגל נגישות" class="bg-health-900 text-white text-sm py-2 px-4 shadow-inner">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+            <span class="flex items-center gap-2 font-medium">
+                <i class="fa-solid fa-universal-access text-health-400"></i>
+                סרגל נגישות מהיר:
+            </span>
+            <div class="flex items-center gap-2 flex-wrap">
+                <button onclick="adjustFontSize(1)" aria-label="הגדל טקסט" class="bg-health-800 hover:bg-health-700 px-3 py-1 rounded transition text-xs font-bold">
+                    <i class="fa-solid fa-plus"></i> הגדל טקסט
+                </button>
+                <button onclick="adjustFontSize(2)" aria-label="הגדל טקסט מורחב" class="bg-health-800 hover:bg-health-700 px-3 py-1 rounded transition text-xs font-bold">
+                    <i class="fa-solid fa-text-height"></i> הגדל מורחב (+2)
+                </button>
+                <button onclick="adjustFontSize(-1)" aria-label="הקטן טקסט" class="bg-health-800 hover:bg-health-700 px-3 py-1 rounded transition text-xs font-bold">
+                    <i class="fa-solid fa-minus"></i> הקטן טקסט
+                </button>
+                <button onclick="toggleHighContrast()" aria-label="ניגודיות גבוהה" class="bg-health-800 hover:bg-health-700 px-3 py-1 rounded transition text-xs font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-circle-half-stroke"></i> ניגודיות גבוהה
+                </button>
+                <button onclick="resetAccessibility()" aria-label="איפוס נגישות" class="bg-red-800 hover:bg-red-700 px-3 py-1 rounded transition text-xs font-bold">
+                    איפוס
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-health-600 text-white p-3 rounded-2xl shadow-lg">
+                    <i class="fa-solid fa-heart-pulse text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-health-800 tracking-tight">תזונה חכמה</h1>
+                    <p class="text-xs text-slate-500 font-medium">פורטל הבריאות והתזונה המדעי שלך</p>
+                </div>
+            </div>
+            <nav class="flex gap-2 flex-wrap justify-center">
+                <button onclick="switchTab('home')" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-health-600 text-white shadow" data-tab="home">ראשי</button>
+                <button onclick="switchTab('calculator')" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-slate-100 hover:bg-health-100 text-slate-700" data-tab="calculator">מחשבון והתאמה אישית</button>
+                <button onclick="switchTab('demographics')" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-slate-100 hover:bg-health-100 text-slate-700" data-tab="demographics">אוכלוסיות (נשים/גברים/ילדים)</button>
+                <button onclick="switchTab('conditions')" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-slate-100 hover:bg-health-100 text-slate-700" data-tab="conditions">התאמה למצבים רפואיים</button>
+                <button onclick="switchTab('sources')" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-slate-100 hover:bg-health-100 text-slate-700" data-tab="sources">מקורות מהימנים</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+
+        <!-- HOME TAB -->
+        <section id="view-home" class="view-section space-y-8">
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-health-700 to-health-600 text-white rounded-3xl p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="space-y-4 max-w-2xl">
+                    <span class="bg-white/20 text-white px-3 py-1 rounded-full text-xs font-semibold tracking-wide uppercase">מבוסס מדע בלבד</span>
+                    <h2 class="text-3xl sm:text-4xl font-black leading-tight">בחירות תזונתיות חכמות לחיים ארוכים ובריאים</h2>
+                    <p class="text-health-50 text-base sm:text-lg font-light leading-relaxed">
+                        ברוכים הבאים לפורטל <strong>תזונה חכמה</strong>, המרכז הנחיות תזונה מהימנות מטעם משרד הבריאות, ארגון הבריאות העולמי ומחקרי תזונה מובילים. גלו טיפים המותאמים אישית למבנה גוף, משקל, גיל ומצב רפואי.
+                    </p>
+                    <div class="pt-2 flex gap-4 flex-wrap">
+                        <button onclick="switchTab('calculator')" class="bg-white text-health-800 px-6 py-3 rounded-xl font-bold shadow-md hover:bg-health-50 transition flex items-center gap-2">
+                            <i class="fa-solid fa-calculator"></i> מחשבון התאמה אישית מתקדם
+                        </button>
+                        <button onclick="switchTab('conditions')" class="bg-health-800 text-white border border-health-500 px-6 py-3 rounded-xl font-bold shadow-md hover:bg-health-900 transition flex items-center gap-2">
+                            <i class="fa-solid fa-stethoscope"></i> תזונה ומצבים רפואיים
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-white/10 p-6 rounded-2xl backdrop-blur-md border border-white/20 text-center text-white max-w-xs w-full shadow-inner">
+                    <i class="fa-solid fa-shield-heart text-5xl mb-3 text-health-100"></i>
+                    <h3 class="font-bold text-lg">בטיחות ואמינות</h3>
+                    <p class="text-xs text-health-100 mt-2">המידע באתר נאסף ממקורות אקדמיים וממשלתיים מוסמכים בלבד ומפוקח מקצועית.</p>
+                </div>
+            </div>
+
+            <!-- Quick Access Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div onclick="switchTab('calculator')" class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-health-100 text-health-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-health-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-calculator"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">מחשבון צרכים אישיים</h3>
+                    <p class="text-sm text-slate-600">חישוב קלוריות, התאמה למבנה גוף (צר/רחב), משקל ודרישות תוספים מדויקות.</p>
+                    <span class="inline-flex items-center gap-1 text-xs font-bold text-health-600 mt-4">לכניסה למחשבון <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+
+                <div onclick="switchTab('demographics'); filterDemo('women')" class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-pink-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-venus"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">תזונה לנשים</h3>
+                    <p class="text-sm text-slate-600">המלצות ברזל, סידן, איזון הורמונלי, הריון והנקה מבוססות מחקר.</p>
+                    <span class="inline-flex items-center gap-1 text-xs font-bold text-pink-600 mt-4">לצפייה המלצות <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+
+                <div onclick="switchTab('demographics'); filterDemo('men')" class="card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition cursor-pointer group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-mars"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-2">תזונה לגברים</h3>
+                    <p class="text-sm text-slate-600">תמיכה במסת שריר, בריאות הלב, פרוסטטה ואנרגיה יומיומית.</p>
+                    <span class="inline-flex items-center gap-1 text-xs font-bold text-blue-600 mt-4">לצפייה המלצות <i class="fa-solid fa-arrow-left"></i></span>
+                </div>
+            </div>
+
+            <!-- Health Banner Callout -->
+            <div class="bg-health-100 border border-health-200 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="text-health-700 text-3xl">
+                        <i class="fa-solid fa-circle-info"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-health-900">מחפשים הנחיה למצב רפואי רגיש כמו סוכרת או לחץ דם?</h4>
+                        <p class="text-sm text-health-800">האתר כולל מדריכים ייעודיים המבוססים על ההנחיות הקליניות העדכניות ביותר.</p>
+                    </div>
+                </div>
+                <button onclick="switchTab('conditions')" class="bg-health-700 hover:bg-health-800 text-white px-5 py-2.5 rounded-xl font-bold text-sm whitespace-nowrap shadow transition">
+                    מעבר למצבים רפואיים
+                </button>
+            </div>
+        </section>
+
+        <!-- CALCULATOR & PERSONALIZATION TAB -->
+        <section id="view-calculator" class="view-section hidden space-y-8">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">מחשבון התאמה אישית מתקדם לפי מבנה גוף ומשקל</h2>
+                <p class="text-slate-600 text-sm">הזינו את הנתונים האישיים שלכם כדי לקבל הערכה קלורית יומית, התאמת מינונים לפי מבנה עצם ומבנה גוף (צר, בינוני, רחב), והמלצות לתוספים מותאמים.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <!-- Calculator Form -->
+                <div class="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 border-b pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-health-600"></i> נתוני גוף ופעילות
+                    </h3>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">מגדר</label>
+                            <select id="calc-gender" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                                <option value="female">נקבה</option>
+                                <option value="male">זכר</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">מבנה גוף / מבנה עצם</label>
+                            <select id="calc-frame" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                                <option value="narrow">מבנה צר (Ectomorph / רזה מטבעו)</option>
+                                <option value="medium">מבנה בינוני (Mesomorph / אתלטי)</option>
+                                <option value="broad">מבנה רחב (Endomorph / עצם רחבה)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">גיל (שנים)</label>
+                            <input type="number" id="calc-age" value="30" min="10" max="120" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">משקל (ק"ג)</label>
+                            <input type="number" id="calc-weight" value="70" min="30" max="250" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">גובה (ס"מ)</label>
+                            <input type="number" id="calc-height" value="170" min="100" max="230" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">רמת פעילות גופנית שבועית</label>
+                        <select id="calc-activity" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-health-600">
+                            <option value="1.2">יושבני / ללא פעילות מיוחדת</option>
+                            <option value="1.375">פעילות קלה (1-3 אימונים בשבוע)</option>
+                            <option value="1.55" selected>פעילות בינונית (3-5 אימונים בשבוע)</option>
+                            <option value="1.725">פעילות אינטנסיבית (6-7 אימונים בשבוע)</option>
+                        </select>
+                    </div>
+
+                    <button onclick="calculateNutrition()" class="w-full bg-health-600 hover:bg-health-700 text-white font-bold py-3.5 px-6 rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-bolt"></i> חשב פרופיל והמלצות אישיות
+                    </button>
+                </div>
+
+                <!-- Calculation Results Panel -->
+                <div id="calc-results-container" class="lg:col-span-6 bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                    <h3 class="text-xl font-bold text-slate-800 border-b pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-list text-health-600"></i> תוצאות והמלצות מותאמות אישית
+                    </h3>
+
+                    <div id="calc-placeholder" class="text-center py-12 text-slate-400 space-y-3">
+                        <i class="fa-solid fa-calculator text-5xl"></i>
+                        <p class="text-sm">הזינו את הנתונים משמאל ולחצו על "חשב פרופיל והמלצות אישיות" כדי לקבל ניתוח מותאם למבנה הגוף והמשקל שלכם.</p>
+                    </div>
+
+                    <div id="calc-output" class="hidden space-y-6">
+                        <!-- Calorie Summary Cards -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-health-50 p-4 rounded-2xl border border-health-100 text-center">
+                                <span class="text-xs text-health-700 font-bold">חילוף חומרים בסיסי (BMR)</span>
+                                <div id="out-bmr" class="text-2xl font-black text-health-900 mt-1">0</div>
+                                <span class="text-[11px] text-slate-500">קלוריות במנוחה מוחלטת</span>
+                            </div>
+                            <div class="bg-health-600 text-white p-4 rounded-2xl shadow-sm text-center">
+                                <span class="text-xs text-health-100 font-bold">הוצאה אנרגטית יומית (TDEE)</span>
+                                <div id="out-tdee" class="text-2xl font-black mt-1">0</div>
+                                <span class="text-[11px] text-health-100">קלוריות לשמירת משקל</span>
+                            </div>
+                        </div>
+
+                        <!-- Frame & Weight Insight -->
+                        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-2">
+                            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-arrows-split-up-and-left text-health-600"></i> ניתוח מבנה גוף (Frame Analysis)
+                            </h4>
+                            <p id="out-frame-text" class="text-xs sm:text-sm text-slate-600 leading-relaxed"></p>
+                        </div>
+
+                        <!-- Tailored Supplement & Nutrient Advice -->
+                        <div class="space-y-3">
+                            <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-pills text-health-600"></i> מינונים מומלצים ודגשי תוספים למבנה ולמשקל שלך
+                            </h4>
+                            <div id="out-nutrients" class="space-y-2 text-xs sm:text-sm text-slate-700">
+                                <!-- Dynamic items populated via JS -->
+                            </div>
+                        </div>
+
+                        <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-900 flex items-start gap-2">
+                            <i class="fa-solid fa-triangle-exclamation shrink-0 mt-0.5"></i>
+                            <span>המלצות אלו מבוססות על נוסחאות מדעיות מקובלות (Mifflin-St Jeor) אך אינן מהוות תחליף לבדיקות דם אישיות ולייעוץ דיאטן קליני.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEMOGRAPHICS TAB -->
+        <section id="view-demographics" class="view-section hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">התאמת תזונה לפי קבוצת אוכלוסייה</h2>
+                <p class="text-slate-600 text-sm">בחרו את קבוצת האוכלוסייה הרצויה כדי לצפות בהנחיות תזונה מפורטות ומבוססות מדע.</p>
+            </div>
+
+            <!-- Sub-tabs selector -->
+            <div class="flex justify-center gap-3 flex-wrap">
+                <button onclick="filterDemo('women')" id="btn-demo-women" class="demo-sub-btn px-5 py-2.5 rounded-xl font-bold text-sm transition bg-pink-600 text-white shadow">
+                    <i class="fa-solid fa-venus ml-2"></i> נשים
+                </button>
+                <button onclick="filterDemo('men')" id="btn-demo-men" class="demo-sub-btn px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-200 text-slate-700 hover:bg-slate-300">
+                    <i class="fa-solid fa-mars ml-2"></i> גברים
+                </button>
+                <button onclick="filterDemo('kids')" id="btn-demo-kids" class="demo-sub-btn px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-200 text-slate-700 hover:bg-slate-300">
+                    <i class="fa-solid fa-child ml-2"></i> ילדים ונוער
+                </button>
+            </div>
+
+            <!-- Demographic Content Panels -->
+            <div id="content-demo-women" class="demo-panel bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 border-b pb-4">
+                    <div class="p-3 bg-pink-100 text-pink-600 rounded-xl text-xl"><i class="fa-solid fa-venus"></i></div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800">המלצות תזונה לנשים בכל מעגלי החיים</h3>
+                        <p class="text-xs text-slate-500">דגשים תזונתיים לשמירה על אנרגיה, איזון הורמונלי וצפיפות עצם</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 space-y-2">
+                        <h4 class="font-bold text-pink-900 flex items-center gap-2"><i class="fa-solid fa-check text-pink-600"></i> צריכת ברזל מספקת</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">בשל איבוד דם חודשי, נשים בגיל הפוריות נמצאות בסיכון גבוה לאנמיה. מומלץ לשלב מזונות עשירים בברזל ספיג (בקר רזה, קטניות, עדשים, טחינה) יחד עם מקור לוויטמין C (כמו לימון או פלפל אדום) המשפר את הספיגה.</p>
+                    </div>
+                    <div class="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 space-y-2">
+                        <h4 class="font-bold text-pink-900 flex items-center gap-2"><i class="fa-solid fa-check text-pink-600"></i> סידן וויטמין D לבריאות העצם</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">מניעת אוסטאורופוזיס מתחילה בבניית מסת עצם צעירה ונמשכת בצריכה קבועה של מוצרי חלב מועשרים, ירקות ירוקי עולה (ברוקולי, כרוב) ודקירה מבוקרת בשמש לקבלת ויטמין D.</p>
+                    </div>
+                    <div class="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 space-y-2">
+                        <h4 class="font-bold text-pink-900 flex items-center gap-2"><i class="fa-solid fa-check text-pink-600"></i> חומצה פולית בהריון וגיל פוריות</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">מומלץ לצרוך תוסף חומצה פולית במינון של 400 מק"ג לכל אישה בגיל הפוריות, ובמיוחד טרם כניסה להריון ובמהלכו, למניעת מומים מולדים במערכת העצבים.</p>
+                    </div>
+                    <div class="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 space-y-2">
+                        <h4 class="font-bold text-pink-900 flex items-center gap-2"><i class="fa-solid fa-check text-pink-600"></i> איזון סוכר וחשקים</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">שילוב סיבים תזונתיים מלאים (דגנים מלאים, שיבולת שועל) ושומנים איכותיים (אבוקדו, שמן זית, אגוזים) מסייע במיתון תנודות סוכר בדם הקשורות לעיתים קרובות לתסמונת קדם-וסתית (PMS).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-demo-men" class="demo-panel hidden bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 border-b pb-4">
+                    <div class="p-3 bg-blue-100 text-blue-600 rounded-xl text-xl"><i class="fa-solid fa-mars"></i></div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800">המלצות תזונה לגברים לבריאות איתנה</h3>
+                        <p class="text-xs text-slate-500">תמיכה במטבוליזם, לב חזק ושימור מסת שריר</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-2">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-2"><i class="fa-solid fa-check text-blue-600"></i> חלבון איכותי לשימור שריר</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">צריכת חלבון מספקת (דגים, עוף, קטניות, ביצים ומוצרי חלב) חיונית לשימור מסת השריר לאורך השנים ולתמיכה בהתאוששות לאחר פעילות גופנית.</p>
+                    </div>
+                    <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-2">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-2"><i class="fa-solid fa-check text-blue-600"></i> בריאות הלב וכלי הדם</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">הפחתת צריכת בשר מעובד ושומן רווי, והעדפת חומצות שומן מסוג אומגה 3 (מדגים כמו סלמון ומקורות צמחיים כמו זרעי צ'יה ואגוזי מלך) להפחתת סיכון לבבי.</p>
+                    </div>
+                    <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-2">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-2"><i class="fa-solid fa-check text-blue-600"></i> אבץ לבריאות הפרוסטטה</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">אבץ הוא מינרל חיוני לתפקוד תקין של בלוטת הערמונית. מקורות מצוינים כוללים גרעיני דלעת, בשר רזה, קטניות ואגוזים.</p>
+                    </div>
+                    <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-2">
+                        <h4 class="font-bold text-blue-900 flex items-center gap-2"><i class="fa-solid fa-check text-blue-600"></i> סיבים תזונתיים וכולסטרול</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">שילוב קבוע של דגנים מלאים וירקות עשירים בסיבים מסיסים מסייע באיזון רמות הכולסטרול בדם ושמירה על לחץ דם תקין.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-demo-kids" class="demo-panel hidden bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100 space-y-6">
+                <div class="flex items-center gap-3 border-b pb-4">
+                    <div class="p-3 bg-amber-100 text-amber-600 rounded-xl text-xl"><i class="fa-solid fa-child"></i></div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800">המלצות תזונה לילדים ונוער בגדילה</h3>
+                        <p class="text-xs text-slate-500">בניית הרגלי אכילה נכונים, תמיכה בהתפתחות קוגניטיבית וחוזק פיזי</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-amber-50/50 p-5 rounded-2xl border border-amber-100 space-y-2">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> ארוחת בוקר חכמה לריכוז</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">פתיחת היום עם מזון המשלב פחמימות מורכבות וחלבון (כמו פרוסת לחם מלא עם גבינה או דייסת שיבולת שועל) מספקת אנרגיה יציבה ללמידה מיטבית בבית הספר.</p>
+                    </div>
+                    <div class="bg-amber-50/50 p-5 rounded-2xl border border-amber-100 space-y-2">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> הימנעות ממשקאות ממותקים</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">העדפה מוחלטת של מים על פני משקאות קלים ומיצים ממותקים, המסייעת במניעת השנת ילדים, עששת שיניים וסוכרת מסוג 2.</p>
+                    </div>
+                    <div class="bg-amber-50/50 p-5 rounded-2xl border border-amber-100 space-y-2">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> גיוון צבעוני בצלחת (חמישה ירקות ביום)</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">חשיפה למגוון רחב של פירות וירקות בצבעים שונים מבטיחה צריכה של ויטמינים, מינרלים ונוגדי חמצון החיוניים למערכת חיסון חזקה.</p>
+                    </div>
+                    <div class="bg-amber-50/50 p-5 rounded-2xl border border-amber-100 space-y-2">
+                        <h4 class="font-bold text-amber-900 flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> שותפות בהכנת האוכל</h4>
+                        <p class="text-sm text-slate-700 leading-relaxed">שיתוף ילדים בבחירת המרכיבים והכנת הארוחות מעודד סקרנות בריאה כלפי מזון טבעי ומפחית בררנות באכילה.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONDITIONS TAB -->
+        <section id="view-conditions" class="view-section hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">התאמת תזונה למצבים רפואיים ומגבלות</h2>
+                <p class="text-slate-600 text-sm">הנחיות תזונתיות מקצועיות המותאמות למחלות נפוצות, תוך דגש על שיתוף אנשי רפואה מוסמכים.</p>
+            </div>
+
+            <!-- Search and Filter Bar -->
+            <div class="max-w-md mx-auto relative">
+                <span class="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-search"></i>
+                </span>
+                <input type="text" id="conditionSearch" onkeyup="filterConditions()" placeholder="חפש מצב רפואי (למשל: סוכרת, צליאק, לחץ דם)..." class="w-full pr-11 pl-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm focus:outline-none focus:border-health-600 text-sm">
+            </div>
+
+            <!-- Conditions Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="conditionsGrid">
+                
+                <!-- Diabetes Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="סוכרת סוכר סוכרת סוג 2 אינסולין">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-red-100 text-red-700 text-xs font-bold px-3 py-1 rounded-full">סוכרת (Diabetes)</span>
+                            <i class="fa-solid fa-droplet text-red-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">ניהול איזון סוכר בדם</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">דגש על פחמימות מורכבות בעלות אינדקס גליקמי נמוך (דגנים מלאים, קטניות), חלוקה שווה של ארוחות לאורך היום, והוספת סיבים תזונתיים המאטים את ספיגת הסוכר.</p>
+                    </div>
+                    <div class="bg-red-50 p-3 rounded-xl border border-red-100 text-xs text-red-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> יש להתאים את כמות הפחמימות בהתאם להנחיות דיאטנית קלינית או רופא מטפל.
+                    </div>
+                </div>
+
+                <!-- Hypertension Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="לחץ דם יתר לחץ דם לב DASH">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full">יתר לחץ דם</span>
+                            <i class="fa-solid fa-heart-pulse text-amber-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">תזונת DASH להורדת לחץ דם</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">הפחתה משמעותית בצריכת נתרן (מלח) מתחת למומלץ, הגברת צריכת אשלגן באמצעות ירקות ופירות טריים, דגנים מלאים ומוצרי חלב דלי שומן.</p>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-xl border border-amber-100 text-xs text-amber-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> מומלץ להימנע ממזונות מעובדים ושימורים המכילים נתרן מוסתר גבוה.
+                    </div>
+                </div>
+
+                <!-- Celiac Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="צליאק גלוטן חיטה רגישות לגלוטן">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-purple-100 text-purple-700 text-xs font-bold px-3 py-1 rounded-full">צליאק (Celiac)</span>
+                            <i class="fa-solid fa-wheat-awn-circle-exclamation text-purple-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">תזונה ללא גלוטן מוקפדת</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">הימנעות מוחלטת מצריכת חיטה, שעורה, שיפון וכוסמין. מעבר לדגנים ללא גלוטן (כגון קינואה, אורז, כוסמת, תירס) והקפדה על מניעת זיהום משני במטבח הביתי.</p>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs text-purple-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> יש לוודא סימון "ללא גלוטן" באריזות מזון מעובד.
+                    </div>
+
+                </div>
+
+                <!-- High Cholesterol Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="כולסטרול שומנים בדם טריגליצרידים לב">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full">כולסטרול גבוה</span>
+                            <i class="fa-solid fa-fire text-blue-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">איזון פרופיל שומני הדם</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">צמצום שומן טראנס ושומן רווי (בשר שמان, מרגרינה, מאפים מתועשים). הגדלת צריכת סיבים מסיסים כמו שיבולת שועל, קטניות ושמן זית כתית מעולה.</p>
+                    </div>
+                    <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> שילוב פעילות גופנית אירובית סדירה תומך בהעלאת כולסטרול טוב (HDL).
+                    </div>
+                </div>
+
+                <!-- Kidney Disease Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="כליות מחלת כליות דיאליזה חלבון זרחן אשלגן">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-teal-100 text-teal-700 text-xs font-bold px-3 py-1 rounded-full">מחלת כליות כרונית</span>
+                            <i class="fa-solid fa-filter text-teal-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">תזונה מותאמת לתפקוד כליות</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">בהתאם לשלב המחלה, ייתכן צורך בהגבלה מבוקרת של חלבון, נתרן, אשלגן וזרחן כדי להפחית את העומס על הכליות ולמנוע סיבוכים.</p>
+                    </div>
+                    <div class="bg-teal-50 p-3 rounded-xl border border-teal-100 text-xs text-teal-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> מחייב מעקב צמוד ובניית תפריט אישי על ידי דיאטנית נפרולוגית.
+                    </div>
+                </div>
+
+                <!-- Irritable Bowel Syndrome (IBS) Card -->
+                <div class="condition-card bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between space-y-4" data-keywords="מעי רגיז IBS בטן רגישה תזונה FODMAP">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">תסמונת המעי הרגיז (IBS)</span>
+                            <i class="fa-solid fa-seedling text-indigo-500 text-lg"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-800 mb-2">ניהול רגישות עיכולית (FODMAP)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">איתור מזונות מעוררי תסמינים (כגון פחמימות קצרות שרשרת תסיסות - FODMAP) באמצעות תהליך הדרגתי של הוצאה והחזרה מבוקרת של סוגי מזון.</p>
+                    </div>
+                    <div class="bg-indigo-50 p-3 rounded-xl border border-indigo-100 text-xs text-indigo-900 font-medium">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> מומלץ לבצע את תהליך הדיאטה בליווי מקצועי כדי למנוע חסרים תזונתיים.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SOURCES TAB -->
+        <section id="view-sources" class="view-section hidden space-y-6">
+            <div class="text-center max-w-2xl mx-auto space-y-2">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">מקורות מידע וקישורים חיצוניים</h2>
+                <p class="text-slate-600 text-sm">המידע באתר נאסף מתוך פרסומים וגישות מקובלות של גופי הבריאות המובילים בישראל ובעולם.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <a href="https://www.gov.il/he/departments/ministry_of_health" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-start gap-4 group">
+                    <div class="w-12 h-12 bg-health-100 text-health-700 rounded-xl flex items-center justify-center text-xl shrink-0 group-hover:bg-health-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-landmark"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg group-hover:text-health-700 transition">משרד הבריאות הישראלי</h3>
+                        <p class="text-sm text-slate-600 mt-1">הנחיות תזונה רשמיות, תוכניות לאומיות למניעת סוכרת, המלצות לסימון תזונתי (המדבקות הירוקות והאדומות).</p>
+                        <span class="text-xs font-bold text-health-600 mt-3 inline-flex items-center gap-1">לאתר הרשמי <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://www.who.int" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-start gap-4 group">
+                    <div class="w-12 h-12 bg-blue-100 text-blue-700 rounded-xl flex items-center justify-center text-xl shrink-0 group-hover:bg-blue-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg group-hover:text-blue-700 transition">ארגון הבריאות העולמי (WHO)</h3>
+                        <p class="text-sm text-slate-600 mt-1">נתונים גלובליים, מחקרים על צריכת סוכר מוסף, מלח, ומדיניות תזונה למניעת מחלות כרוניות.</p>
+                        <span class="text-xs font-bold text-blue-600 mt-3 inline-flex items-center gap-1">לאתר הרשמי <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://pubmed.ncbi.nlm.nih.gov" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-start gap-4 group">
+                    <div class="w-12 h-12 bg-sky-100 text-sky-700 rounded-xl flex items-center justify-center text-xl shrink-0 group-hover:bg-sky-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-microscope"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg group-hover:text-sky-700 transition">PubMed - מאגר מחקרים רפואיים</h3>
+                        <p class="text-sm text-slate-600 mt-1">מאגר עולמי מוביל לסקירת ספרות אקדמית ומחקרים קליניים מבוססי ראיות בתחומי הרפואה והתזונה.</p>
+                        <span class="text-xs font-bold text-sky-600 mt-3 inline-flex items-center gap-1">לאתר הרשמי <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></span>
+                    </div>
+                </a>
+
+                <a href="https://www.eatright.org" target="_blank" rel="noopener noreferrer" class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition flex items-start gap-4 group">
+                    <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center text-xl shrink-0 group-hover:bg-emerald-600 group-hover:text-white transition">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg group-hover:text-emerald-700 transition">האקדמיה לתזונה ודיאטטיקה (AND)</h3>
+                        <p class="text-sm text-slate-600 mt-1">הארגון המקצועי הגדול בעולם למומחי תזונה, מפרסם ניירות עמדה מבוססי ראיות מדעיות (Evidence-Based Practice).</p>
+                        <span class="text-xs font-bold text-emerald-600 mt-3 inline-flex items-center gap-1">לאתר הרשמי <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i></span>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Medical Disclaimer Box -->
+            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-6 max-w-4xl mx-auto flex items-start gap-4 text-amber-900">
+                <i class="fa-solid fa-triangle-exclamation text-2xl shrink-0 mt-1"></i>
+                <div class="space-y-1">
+                    <h4 class="font-bold">הצהרה והסרת אחריות</h4>
+                    <p class="text-xs sm:text-sm leading-relaxed">
+                        אתר זה מהווה פלטפורמה להצגת מידע כללי המבוסס על פרסומים ממשלתיים ובינלאומיים פומביים בלבד. האתר אינו מספק ייעוץ רפואי, אינו צד בהחלטות טיפוליות, ואינו נושאי באחריות משפטית או מקצועית כלשהי לתוצאות השימוש במידע. בכל עניין בריאותי, יש להתייעץ ישירות עם אנשי רפואה מוסמכים.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-right">
+            <div>
+                <p class="text-white font-bold text-base">תזונה חכמה &copy; 2026</p>
+                <p class="text-xs text-slate-500 mt-1">פורטל תזונה ואורח חיים בריא מבוסס מקורות מהימנים.</p>
+            </div>
+            <div class="flex gap-4 text-sm">
+                <button onclick="switchTab('home')" class="hover:text-white transition">ראשי</button>
+                <button onclick="switchTab('demographics')" class="hover:text-white transition">התאמה אישית</button>
+                <button onclick="switchTab('conditions')" class="hover:text-white transition">מצבים רפואיים</button>
+                <button onclick="switchTab('sources')" class="hover:text-white transition">מקורות</button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Health Mascot (Floating Apple / Health Character) -->
+    <div id="health-mascot" class="fixed bottom-6 left-6 z-50 cursor-pointer group select-none transition-transform duration-300 hover:scale-110" title="לחץ עליי לטיפ בריאות מהיר!" onclick="showMascotTip()">
+        <div class="relative bg-white/90 backdrop-blur-md p-3 rounded-full shadow-2xl border-2 border-health-500 flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 animate-bounce">
+            <!-- SVG Green Apple / Mascot -->
+            <svg class="w-10 h-10 sm:w-12 sm:h-12 text-health-600 transition-transform duration-300 group-hover:rotate-12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 5.24c.57-.69 9.96-1.3 9.87-1.3-.01.1-.13 1.25-.86 2.11-.74.87-1.68 1.4-2.58 1.32-.23-.02-.45-.09-.67-.2-1.08-.54-1.89-1.54-1.76-1.93z"/>
+            </svg>
+            <span class="absolute -top-1 -right-1 flex h-4 w-4">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-health-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-4 w-4 bg-health-500 text-[10px] text-white items-center justify-center font-bold">!</span>
+            </span>
+        </div>
+        <!-- Speech Bubble -->
+        <div id="mascot-bubble" class="absolute bottom-20 left-0 bg-slate-900 text-white text-xs px-3 py-2 rounded-xl shadow-xl w-48 hidden opacity-0 transition-opacity duration-300 pointer-events-none">
+            <span id="mascot-text">שלום! אני תפוחי הבריאות שלך. הקפד על שתיית מים ואכילת ירקות צבעוניים היום!</span>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Tab Switching functionality
+        function switchTab(tabId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => v.classList.add('hidden'));
+
+            // Show target view
+            const target = document.getElementById('view-' + tabId);
+            if (target) {
+                target.classList.remove('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Update header tab buttons active style
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.className = "tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-health-600 text-white shadow";
+                } else {
+                    btn.className = "tab-btn px-4 py-2 rounded-xl font-medium text-sm transition bg-slate-100 hover:bg-health-100 text-slate-700";
+                }
+            });
+        }
+
+        // Calculator Logic considering Body Frame, Weight, Gender
+        function calculateNutrition() {
+            const gender = document.getElementById('calc-gender').value;
+            const frame = document.getElementById('calc-frame').value;
+            const age = parseFloat(document.getElementById('calc-age').value);
+            const weight = parseFloat(document.getElementById('calc-weight').value);
+            const height = parseFloat(document.getElementById('calc-height').value);
+            const activity = parseFloat(document.getElementById('calc-activity').value);
+
+            if (isNaN(age) || isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0 || age <= 0) {
+                alert('אנא הזינו נתונים תקינים בכל השדות.');
+                return;
+            }
+
+            // Mifflin-St Jeor BMR Equation
+            let bmr = (10 * weight) + (6.25 * height) - (5 * age);
+            if (gender === 'male') {
+                bmr += 5;
+            } else {
+                bmr -= 161;
+            }
+
+            // Frame adjustments
+            let frameMultiplier = 1.0;
+            let frameText = "";
+            if (frame === 'narrow') {
+                frameMultiplier = 0.95;
+                frameText = "מבנה גוף צר (Ectomorph): בעל מטבוליזם מהיר בדרך כלל וצפיפות עצם עדינה. מומלץ להקפיד על ארוחות תכופות יותר, דגש על חלבון איכותי למניעת פירוק שריר, ומעקב אחר רמות ברזל וויטמין B12.";
+            } else if (frame === 'medium') {
+                frameMultiplier = 1.0;
+                frameText = "מבנה גוף בינוני (Mesomorph): פרופורציונלי ומגיב היטב לאימונים ולתזונה מאוזנת. מומלץ לשמור על יחס מאוזן בין פחמימות מורכבות, חלבונים ושומנים בריאים (שמן זית, אבוקדו).";
+            } else {
+                frameMultiplier = 1.05;
+                frameText = "מבנה גוף רחב (Endomorph): נוטה לאגירת אנרגיה יעילה ודורש תשומת לב לאינדקס גליקמי של פחמימות. מומלץ להרבות בסיבים תזונתיים המאטים ספיגה ומספקים תחושת שובע ממושכת.";
+            }
+
+            const tdee = Math.round(bmr * activity * frameMultiplier);
+            const finalBmr = Math.round(bmr * frameMultiplier);
+
+            // Display results
+            document.getElementById('calc-placeholder').classList.add('hidden');
+            document.getElementById('calc-output').classList.remove('hidden');
+
+            document.getElementById('out-bmr').innerText = finalBmr + " קלוריות";
+            document.getElementById('out-tdee').innerText = tdee + " קלוריות";
+            document.getElementById('out-frame-text').innerText = frameText;
+
+            // Tailored Nutrients & Supplements based on weight & frame
+            let nutrientsHtml = "";
+            let proteinRec = (weight * (gender === 'male' ? 1.4 : 1.2)).toFixed(0);
+            let waterRec = (weight * 35).toFixed(0);
+
+            nutrientsHtml += `<div class="bg-health-50/60 p-3 rounded-xl border border-health-100 flex items-center justify-between">
+                <span><strong>חלבון יומי מומלץ למשקל שלך:</strong></span>
+                <span class="font-bold text-health-800">${proteinRec} גרם ליום</span>
+            </div>`;
+
+            nutrientsHtml += `<div class="bg-health-50/60 p-3 rounded-xl border border-health-100 flex items-center justify-between">
+                <span><strong>צריכת נוזלים מינימלית:</strong></span>
+                <span class="font-bold text-health-800">כ-${waterRec} מ"ל (כ-${(waterRec/250).toFixed(1)} כוסות מים)</span>
+            </div>`;
+
+            if (gender === 'female') {
+                nutrientsHtml += `<div class="bg-pink-50/60 p-3 rounded-xl border border-pink-100">
+                    <strong>תוספים ודגשים למבנה נשי:</strong> מומלץ מעקב תקופתי אחר פריטין/ברזל וויטמין D. במבנה ${frame === 'narrow' ? 'צר' : 'רחב'}, חשוב להקפיד במיוחד על מקורות סידן ומגנזיום לבריאות העצם.
+                </div>`;
+            } else {
+                nutrientsHtml += `<div class="bg-blue-50/60 p-3 rounded-xl border border-blue-100">
+                    <strong>תוספים ודגשים למבנה גברי:</strong> תמיכה במטבוליזם פעיל עם דגש על אבץ, חומצות שומן אומגה 3 וצריכת סיבים מספקת לאיזון כולסטרול.
+                </div>`;
+            }
+
+            document.getElementById('out-nutrients').innerHTML = nutrientsHtml;
+        }
+
+        // Sub-demographic filter logic (Women / Men / Kids)
+        function filterDemo(type) {
+            // Hide all panels
+            const panels = document.querySelectorAll('.demo-panel');
+            panels.forEach(p => p.classList.add('hidden'));
+
+            // Show selected panel
+            const targetPanel = document.getElementById('content-demo-' + type);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+
+            // Update sub-buttons style
+            const buttons = document.querySelectorAll('.demo-sub-btn');
+            buttons.forEach(btn => {
+                btn.className = "demo-sub-btn px-5 py-2.5 rounded-xl font-bold text-sm transition bg-slate-200 text-slate-700 hover:bg-slate-300";
+            });
+
+            const activeBtn = document.getElementById('btn-demo-' + type);
+            if (activeBtn) {
+                let colorClass = "bg-pink-600 text-white";
+                if (type === 'men') colorClass = "bg-blue-600 text-white";
+                if (type === 'kids') colorClass = "bg-amber-600 text-white";
+                activeBtn.className = "demo-sub-btn px-5 py-2.5 rounded-xl font-bold text-sm transition shadow " + colorClass;
+            }
+        }
+
+        // Medical conditions search/filter logic
+        function filterConditions() {
+            const query = document.getElementById('conditionSearch').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.condition-card');
+
+            cards.forEach(card => {
+                const keywords = card.getAttribute('data-keywords').toLowerCase();
+                const textContent = card.innerText.toLowerCase();
+                if (keywords.includes(query) || textContent.includes(query)) {
+                    card.style.display = "flex";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // Accessibility tools state & functions
+        let currentFontSizeLevel = 0; // 0: normal, 1: large, 2: extra large (מורחב)
+        function adjustFontSize(directionOrLevel) {
+            const body = document.body;
+            
+            if (directionOrLevel === 2) {
+                currentFontSizeLevel = 2;
+            } else if (directionOrLevel > 0 && currentFontSizeLevel < 2) {
+                currentFontSizeLevel++;
+            } else if (directionOrLevel < 0 && currentFontSizeLevel > -1) {
+                currentFontSizeLevel--;
+            }
+
+            body.classList.remove('text-lg-accessibility', 'text-xl-accessibility');
+            if (currentFontSizeLevel === 1) {
+                body.classList.add('text-lg-accessibility');
+            } else if (currentFontSizeLevel >= 2) {
+                body.classList.add('text-xl-accessibility');
+                currentFontSizeLevel = 2;
+            }
+        }
+
+        function toggleHighContrast() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function resetAccessibility() {
+            currentFontSizeLevel = 0;
+            document.body.classList.remove('text-lg-accessibility', 'text-xl-accessibility', 'high-contrast');
+        }
+
+        // Mascot interaction & mouse reaction
+        const healthTipsList = [
+            "טיפ בריאות: מומלץ לשלב לפחות 5 מנות ירק ופרי בצבעים שונים בכל יום!",
+            "טיפ תזונה: שתיית 8-10 כוסות מים ביום משפרת חילוף חומרים וריכוז.",
+            "טיפ מבנה גוף: התאם את כמות החלבון והסיבים למשקל ולמבנה הגוף האישי שלך.",
+            "טיפ תנועה: גם 30 דקות הליכה יומית תורמות משמעותית לבריאות הלב וכלי הדם!"
+        ];
+
+        function showMascotTip() {
+            const bubble = document.getElementById('mascot-bubble');
+            const textEl = document.getElementById('mascot-text');
+            const randomTip = healthTipsList[Math.floor(Math.random() * healthTipsList.length)];
+            
+            textEl.innerText = randomTip;
+            bubble.classList.remove('hidden');
+            setTimeout(() => {
+                bubble.classList.remove('opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                bubble.classList.add('opacity-0');
+                setTimeout(() => {
+                    bubble.classList.add('hidden');
+                }, 300);
+            }, 4500);
+        }
+
+        // Subtle mouse tracking interaction for mascot tilt
+        document.addEventListener('mousemove', (e) => {
+            const mascot = document.getElementById('health-mascot');
+            if (!mascot) return;
+            const rect = mascot.getBoundingClientRect();
+            const mascotX = rect.left + rect.width / 2;
+            const mascotY = rect.top + rect.height / 2;
+            
+            // Calculate angle and distance to make the mascot react to cursor
+            const deltaX = e.clientX - mascotX;
+            const deltaY = e.clientY - mascotY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            
+            // If mouse is within 300px, tilt slightly towards or away from cursor for a lively feel
+            if (distance < 350) {
+                const angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+                const tilt = Math.min(Math.max(deltaX / 15, -15), 15);
+                mascot.style.transform = `translateY(${Math.sin(Date.now() / 300) * 4}px) rotate(${tilt}deg)`;
+            } else {
+                mascot.style.transform = 'translateY(0px) rotate(0deg)';
+            }
+        });
+    </script>
+</body>
+</html>
